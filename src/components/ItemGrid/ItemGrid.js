@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import Item from './Item';
+import './ItemGrid.scss';
 
-function Scrape() {
+function ItemGrid() {
+	const classes = 'ItemGrid';
 	const [hasError, setErrors] = useState(false);
 	const [results, setResults] = useState([]);
 
@@ -20,15 +23,18 @@ function Scrape() {
 	return (
 		<div>
 			<h3>Results:</h3>
-			{ results && results.map( item => {
-				return (
-					<div>
-						<img
-							{...item.image}
-						/>
-					</div>
-				)
-			})}
+			{ results && (
+				<div className="ItemGrid">
+					{ results.map(item => {
+						return (
+							<Item
+								classes={classes}
+								{...item}
+							/>
+						)
+					})}
+				</div>
+			)}
 			<hr />
 			<h3>Errors:</h3>
 			{JSON.stringify(hasError)}
@@ -36,4 +42,4 @@ function Scrape() {
 	);
 }
 
-export default Scrape;
+export default ItemGrid;
