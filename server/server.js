@@ -16,7 +16,7 @@ const run = () => {
           return {
             title : item.querySelector('.range-revamp-header-section__title--small').innerHTML,
             image : {
-              srcset: item.querySelector('img').getAttribute('srcset')
+              srcSet: item.querySelector('img').getAttribute('srcset')
             }
           }
         });
