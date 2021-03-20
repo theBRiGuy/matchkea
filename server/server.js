@@ -1,6 +1,6 @@
-const express = require('express')
-const cors = require('cors')
-const puppeteer = require('puppeteer')
+const express = require('express');
+const cors = require('cors');
+const puppeteer = require('puppeteer');
 
 const url = 'https://www.ikea.com/ca/en/search/products/?q=shelves';
 
@@ -14,23 +14,25 @@ const run = () => {
         console.log('items is', items);
         return items.map(item => {
           return {
-            title : item.querySelector('.range-revamp-header-section__title--small').innerHTML,
-            image : {
-              srcSet: item.querySelector('img').getAttribute('srcset')
-            }
-          }
+            title: item.querySelector(
+              '.range-revamp-header-section__title--small'
+            ).innerHTML,
+            image: {
+              srcSet: item.querySelector('img').getAttribute('srcset'),
+            },
+          };
         });
       });
       console.log('returnedJSON is', returnedJSON);
       browser.close();
       return res(returnedJSON);
-    } catch(e) {
+    } catch (e) {
       return rej(e);
     }
   });
-}
+};
 
-const app = express()
+const app = express();
 app.use(cors());
 app.get('/', function (req, res) {
   run()
@@ -39,6 +41,8 @@ app.get('/', function (req, res) {
       res.json(json);
     })
     .catch(console.error);
-})
+});
 
-app.listen(4000, () => console.log('Express Server Now Running On localhost:4000'))
+app.listen(4000, () =>
+  console.log('Express Server Now Running On localhost:4000')
+);

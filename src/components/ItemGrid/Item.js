@@ -1,21 +1,13 @@
-import react from 'react';
-
 function Item(props) {
-  const {
-    classes,
-    title,
-    image
-  } = props;
+  const baseCls = `${props.baseCls}__Item`;
+  const { title, image } = props;
 
   return (
-    <div className={`${classes}__Item`}>
-      <img
-        className={`${classes}__image`}
-        {...image}
-      />
-      <h3 className={`${classes}__title`}>{title}</h3>
+    <div className={baseCls}>
+      <img className={`${baseCls}__image`} {...image} />
+      <h3 className={`${baseCls}__title`}>{title}</h3>
     </div>
-  )
+  );
 }
 
 export default Item;
