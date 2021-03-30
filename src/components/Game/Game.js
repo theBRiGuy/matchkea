@@ -33,10 +33,10 @@ class Game extends Component {
 		}
 	};
 
-	updateScore = (q, isCorrect) => {
+	updateScore = (q, itemID, isCorrect) => {
 		this.setState(
 			(prevState) => ({
-				score: [...prevState.score, { q, isCorrect }]
+				score: [...prevState.score, { q, itemID, isCorrect }]
 			}),
 			() => {
 				if (this.state.currentQuestion === this.props.maxQuestions) {
@@ -76,7 +76,9 @@ class Game extends Component {
 
 	render() {
 		if (this.state.gameComplete) {
-			return <GameSummary score={this.state.score} />;
+			return (
+				<GameSummary score={this.state.score} results={this.state.results} />
+			);
 		} else {
 			return (
 				this.state.dataLoaded && (

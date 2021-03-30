@@ -36,7 +36,7 @@ function ItemGuess(props) {
 
 	const handleItemClick = (id) => {
 		// Update score object
-		props.updateScore(props.current, id === item.id);
+		props.updateScore(props.current, id, id === item.id);
 	};
 
 	useEffect(() => {
