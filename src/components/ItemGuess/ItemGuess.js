@@ -6,13 +6,10 @@ import ChoiceButton from '../ChoiceButton/ChoiceButton';
 function ItemGuess(props) {
 	const baseCls = 'ItemGuess';
 	const { item, results } = props;
-	console.log('props is', props);
-	console.log('xxx item is', item);
 	const [choices, setChoices] = useState([]);
 
 	const getChoices = (n = 4) => {
 		let choices = [item];
-		console.log('xxx choices is', choices);
 		for (let i = 1; i < n; i++) {
 			choices.push(getRandomChoice(choices));
 		}
@@ -25,8 +22,6 @@ function ItemGuess(props) {
 
 		if (
 			existingChoicesArr.find((choice) => {
-				console.log('existingChoicesArr is', existingChoicesArr);
-				console.log('choice is ', choice);
 				return (
 					choice.title.toLowerCase() === potentialChoice.title.toLowerCase()
 				);
@@ -39,19 +34,14 @@ function ItemGuess(props) {
 		}
 	};
 
-	const handleItemClick = (e) => {
-		console.log('this is', this);
-		console.log('e is', e);
-		if (this.props.choice.id === item.id) {
-			alert('Correct!');
-		} else {
-			alert('Incorrect!');
-		}
+	const handleItemClick = (id) => {
+		// Update score object
+		props.updateScore(props.current, id === item.id);
 	};
 
 	useEffect(() => {
 		setChoices(shuffleArray(getChoices()));
-	}, []);
+	}, [item]);
 
 	return (
 		<div>
@@ -65,7 +55,9 @@ function ItemGuess(props) {
 					{choices.map((choice) => (
 						<ChoiceButton
 							baseCls={`${baseCls}__choices__choice`}
-							onClick={handleItemClick}
+							onClick={(e) => {
+								handleItemClick(choice.id);
+							}}
 							choice={choice}
 						>
 							{choice.title}

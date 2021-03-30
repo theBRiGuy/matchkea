@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import QuestionCounter from '../QuestionCounter/QuestionCounter';
 import ItemGuess from '../ItemGuess/ItemGuess';
+import GameSummary from '../GameSummary/GameSummary';
 
 class Game extends Component {
 	constructor(props) {
@@ -10,7 +11,10 @@ class Game extends Component {
 			quizQuestionsAsked: [],
 			currentQuestion: 1,
 			errors: null,
-			results: []
+			dataLoaded: false,
+			results: [],
+			score: [],
+			gameComplete: false
 		};
 	}
 
@@ -29,6 +33,27 @@ class Game extends Component {
 		}
 	};
 
+	updateScore = (q, isCorrect) => {
+		this.setState(
+			(prevState) => ({
+				score: [...prevState.score, { q, isCorrect }]
+			}),
+			() => {
+				if (this.state.currentQuestion === this.props.maxQuestions) {
+					this.setState({
+						gameComplete: true
+					});
+				} else {
+					this.setState((oldState) => ({
+						// Get new question
+						currentItem: this.getUniqueQuestion(),
+						currentQuestion: oldState.currentQuestion + 1
+					}));
+				}
+			}
+		);
+	};
+
 	componentDidMount() {
 		const url = 'http://localhost:4000/';
 		fetch(url)
@@ -39,17 +64,10 @@ class Game extends Component {
 						results: json
 					},
 					() => {
-						this.setState(
-							{
-								currentItem: this.getUniqueQuestion()
-							},
-							() => {
-								console.log(
-									'this.state.currentItem is',
-									this.state.currentItem
-								);
-							}
-						);
+						this.setState({
+							dataLoaded: true,
+							currentItem: this.getUniqueQuestion()
+						});
 					}
 				);
 			})
@@ -57,75 +75,27 @@ class Game extends Component {
 	}
 
 	render() {
-		return (
-			<div>
-				<QuestionCounter
-					current={this.state.currentQuestion}
-					end={this.props.maxQuestions}
-				/>
-				{this.state.results.length > 0 && this.state.currentItem && (
-					<ItemGuess
-						item={this.state.currentItem}
-						results={this.state.results}
-					/>
-				)}
-			</div>
-		);
+		if (this.state.gameComplete) {
+			return <GameSummary score={this.state.score} />;
+		} else {
+			return (
+				this.state.dataLoaded && (
+					<>
+						<QuestionCounter
+							current={this.state.currentQuestion}
+							end={this.props.maxQuestions}
+						/>
+						<ItemGuess
+							item={this.state.currentItem}
+							results={this.state.results}
+							current={this.state.currentQuestion}
+							updateScore={this.updateScore}
+						/>
+					</>
+				)
+			);
+		}
 	}
 }
 
 export default Game;
-// import { useState, useEffect, useCallback } from 'react';
-// import { useConstructor } from 'use-constructor-hook';
-// import QuestionCounter from '../QuestionCounter/QuestionCounter';
-// import ItemGuess from '../ItemGuess/ItemGuess';
-
-// function Game() {
-// 	const [hasError, setErrors] = useState(false);
-// 	const [results, setResults] = useState([]);
-// 	const [quizQuestionsAsked, setQuizQuestionsAsked] = useState([]);
-// 	const [currentQuestion, setCurrentQuestion] = useState(1);
-// 	const [currentItem, setCurrentItem] = useState(null);
-// 	const url = 'http://localhost:4000/';
-// 	const maxQuestions = 10;
-
-// 	const nextQuestion = () => {
-// 		const rand = Math.floor(Math.random() * results.length);
-// 		console.log('results is', results);
-// 		console.log('rand is', rand);
-// 		const potentialQuestion = results[rand];
-// 		console.log('potentialQuestion is', potentialQuestion);
-// 		if (!quizQuestionsAsked.includes(potentialQuestion.id)) {
-// 			setQuizQuestionsAsked(quizQuestionsAsked.push(potentialQuestion.id));
-// 			return potentialQuestion;
-// 		}
-// 		return nextQuestion();
-// 	};
-
-// 	const fetchData = async () => {
-// 		const response = await fetch(url);
-// 		response
-// 			.json()
-// 			.then((json) => {
-// 				setResults(json);
-// 			})
-// 			.catch((err) => setErrors(err));
-// 		console.log('currentItem is', currentItem);
-// 		setCurrentItem(nextQuestion());
-// 	};
-
-// 	useConstructor(async () => {
-// 		fetchData();
-// 	});
-
-// 	useEffect(() => {}, []);
-
-// 	return (
-// 		<div>
-// 			<QuestionCounter current={currentQuestion} end={maxQuestions} />
-// 			<ItemGuess item={currentItem} />
-// 		</div>
-// 	);
-// }
-
-// export default Game;
